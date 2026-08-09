@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bisik — kotak pengakuan anonim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#100E17;
+    --bg-2:#17141F;
+    --surface:#1D1926;
+    --surface-2:#25202F;
+    --paper:#EDE6D6;
+    --paper-dim:#948FA0;
+    --hairline:#332D3E;
+    --amber:#E8A33D;
+    --amber-dim:rgba(232,163,61,0.14);
+    --lavender:#8C7FC4;
+    --rose:#C97B84;
+    --sage:#7FA382;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--amber-dim);color:var(--amber);}
+
+  .glow-field{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse 600px 400px at 50% -10%, rgba(232,163,61,0.10), transparent 60%),
+      linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 100%);
+    border-bottom:1px solid var(--hairline);
+  }
+
+  .wrap{max-width:640px;margin:0 auto;padding:0 24px;}
+
+  header.top{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:28px 0 0;
+    max-width:640px;margin:0 auto;padding-left:24px;padding-right:24px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{
+    width:26px;height:26px;border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 16px 4px rgba(232,163,61,0.55);
+    animation:flicker 3.4s ease-in-out infinite;
+  }
+  @keyframes flicker{
+    0%,100%{box-shadow:0 0 16px 4px rgba(232,163,61,0.55);opacity:1;}
+    45%{box-shadow:0 0 10px 2px rgba(232,163,61,0.35);opacity:0.85;}
+    60%{box-shadow:0 0 20px 6px rgba(232,163,61,0.6);opacity:1;}
+  }
+  .brand-name{font-family:'Fraunces',serif;font-size:19px;letter-spacing:0.01em;}
+  .count-pill{
+    font-size:12px;color:var(--paper-dim);
+    border:1px solid var(--hairline);
+    padding:5px 12px;border-radius:999px;
+  }
+
+  .hero{
+    padding:56px 0 44px;
+    text-align:center;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-style:italic;
+    font-size:clamp(30px,6vw,44px);
+    line-height:1.15;
+    margin:0 0 14px;
+    color:#F6F1E7;
+  }
+  .hero p.sub{
+    color:var(--paper-dim);
+    font-size:15px;
+    max-width:420px;
+    margin:0 auto;
+    line-height:1.6;
+  }
+
+  .composer{
+    background:var(--surface);
+    border:1px solid var(--hairline);
+    border-radius:16px;
+    padding:20px;
+    margin:34px 0 8px;
+  }
+  .composer textarea{
+    width:100%;
+    min-height:96px;
+    resize:vertical;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--paper);
+    font-family:'Instrument Serif', serif;
+    font-size:19px;
+    font-style:italic;
+    line-height:1.5;
+    padding:0;
+  }
+  .composer textarea::placeholder{color:#5B5568;}
+  .composer-foot{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:14px;padding-top:14px;
+    border-top:1px solid var(--hairline);
+  }
+  .char-count{font-size:12px;color:var(--paper-dim);}
+  .char-count.warn{color:var(--rose);}
+  .send-btn{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    color:#241705;
+    background:var(--amber);
+    border:none;
+    padding:11px 20px;
+    border-radius:999px;
+    cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:transform .15s ease, opacity .15s ease;
+  }
+  .send-btn:hover{transform:translateY(-1px);}
+  .send-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+  .send-btn svg{width:14px;height:14px;}
+
+  .notice{
+    text-align:center;font-size:12px;color:var(--paper-dim);
+    margin:0 0 46px;
+  }
+
+  main{max-width:640px;margin:0 auto;padding:0 24px 80px;}
+
+  .feed-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    margin:0 0 18px;
+  }
+  .feed-head h2{
+    font-family:'Fraunces',serif;font-weight:500;font-size:16px;
+    color:var(--paper-dim);margin:0;letter-spacing:0.02em;
+  }
+  .feed-head span{font-size:12px;color:#615B6E;}
+
+  .feed{display:flex;flex-direction:column;gap:14px;}
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--hairline);
+    border-left:3px solid var(--accent-color, var(--amber));
+    border-radius:4px 14px 14px 4px;
+    padding:20px 22px;
+    opacity:0;
+    transform:translateY(6px);
+    animation:rise .5s ease forwards;
+  }
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+
+  .card-text{
+    font-family:'Instrument Serif', serif;
+    font-style:italic;
+    font-size:18px;
+    line-height:1.55;
+    color:#F1EBDE;
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+  .card-foot{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:14px;
+  }
+  .card-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--paper-dim);}
+  .card-tag{color:var(--paper-dim);}
+  .heart-btn{
+    display:flex;align-items:center;gap:6px;
+    background:transparent;border:1px solid var(--hairline);
+    color:var(--paper-dim);
+    padding:6px 11px;border-radius:999px;
+    font-size:12px;font-family:'Inter',sans-serif;
+    cursor:pointer;transition:all .15s ease;
+  }
+  .heart-btn:hover{border-color:var(--rose);color:var(--rose);}
+  .heart-btn.lit{color:var(--rose);border-color:var(--rose);background:rgba(201,123,132,0.10);}
+  .heart-btn svg{width:13px;height:13px;}
+
+  .empty{
+    text-align:center;padding:60px 20px;color:var(--paper-dim);
+    border:1px dashed var(--hairline);border-radius:16px;
+  }
+  .empty p.big{
+    font-family:'Fraunces',serif;font-style:italic;font-size:19px;
+    color:var(--paper);margin:0 0 8px;
+  }
+  .empty p.small{font-size:13px;margin:0;}
+
+  .loading{text-align:center;padding:40px;color:var(--paper-dim);font-size:13px;}
+
+  footer{
+    text-align:center;padding:30px 24px 50px;
+    color:#524C5F;font-size:11.5px;line-height:1.7;
+  }
+
+  @media (max-width:480px){
+    .hero{padding:40px 0 32px;}
+    .composer{padding:16px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-field">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <span class="brand-name">Bisik</span>
+    </div>
+    <span class="count-pill" id="totalCount">— bisikan</span>
+  </header>
+
+  <div class="wrap">
+    <div class="hero">
+      <h1>Ceritakan.<br>Tak ada yang tahu itu kamu.</h1>
+      <p class="sub">Tulis apa yang belum bisa kamu ucapkan ke siapa pun. Sepenuhnya anonim, sepenuhnya untuk didengar.</p>
+    </div>
+
+    <div class="composer">
+      <textarea id="confessInput" maxlength="500" placeholder="Sebenarnya, aku..."></textarea>
+      <div class="composer-foot">
+        <span class="char-count" id="charCount">0 / 500</span>
+        <button class="send-btn" id="sendBtn" disabled>
+          Kirim ke kegelapan
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+    <p class="notice">Semua bisikan bersifat publik dan bisa dibaca siapa saja yang membuka halaman ini.</p>
+  </div>
+</div>
+
+<main>
+  <div class="feed-head">
+    <h2>Bisikan malam ini</h2>
+    <span id="feedSub">memuat…</span>
+  </div>
+  <div id="feed" class="feed">
+    <div class="loading">Membuka kotak gelap…</div>
+  </div>
+</main>
+
+<footer>
+  Bisik bukan layanan darurat atau konseling profesional.<br>
+  Jika kamu butuh bantuan segera, hubungi tenaga profesional atau layanan krisis di daerahmu.
+</footer>
+
+<script>
+const PREFIX = 'confession:';
+const accents = ['#E8A33D', '#8C7FC4', '#C97B84', '#7FA382'];
+const heartedLocally = new Set();
+
+const input = document.getElementById('confessInput');
+const charCount = document.getElementById('charCount');
+const sendBtn = document.getElementById('sendBtn');
+const feedEl = document.getElementById('feed');
+const feedSub = document.getElementById('feedSub');
+const totalCount = document.getElementById('totalCount');
+
+input.addEventListener('input', () => {
+  const len = input.value.length;
+  charCount.textContent = `${len} / 500`;
+  charCount.classList.toggle('warn', len > 460);
+  sendBtn.disabled = input.value.trim().length === 0;
+});
+
+function timeAgo(ts){
+  const diff = Math.max(0, Date.now() - ts);
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'baru saja';
+  if (m < 60) return `${m} menit lalu`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h} jam lalu`;
+  const d = Math.floor(h / 24);
+  return `${d} hari lalu`;
+}
+
+function cardHTML(entry){
+  const accent = accents[Math.abs(hashStr(entry.id)) % accents.length];
+  const lit = heartedLocally.has(entry.id);
+  const tag = '#' + entry.id.slice(-4).toUpperCase();
+  const esc = entry.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `
+  <article class="card" style="--accent-color:${accent}" data-id="${entry.id}">
+    <div class="card-text">${esc}</div>
+    <div class="card-foot">
+      <div class="card-meta">
+        <span class="card-tag">${tag}</span>
+        <span>·</span>
+        <span>${timeAgo(entry.time)}</span>
+      </div>
+      <button class="heart-btn ${lit ? 'lit' : ''}" onclick="toggleHeart('${entry.id}')">
+        <svg viewBox="0 0 24 24" fill="${lit ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.6-10-9.1C.5 8.4 2 4.5 6 4c2.2-.3 4 1 6 3.5C14 5 15.8 3.7 18 4c4 .5 5.5 4.4 4 7.9C19.5 16.4 12 21 12 21z"/></svg>
+        <span>${entry.hearts || 0}</span>
+      </button>
+    </div>
+  </article>`;
+}
+
+function hashStr(s){
+  let h = 0;
+  for (let i = 0; i < s.length; i++){ h = (h << 5) - h + s.charCodeAt(i); h |= 0; }
+  return h;
+}
+
+async function loadFeed(){
+  try{
+    const listRes = await window.storage.list(PREFIX, true);
+    const keys = listRes ? listRes.keys : [];
+    if (!keys.length){
+      feedEl.innerHTML = `<div class="empty"><p class="big">Belum ada bisikan malam ini.</p><p class="small">Jadilah yang pertama membuka kotak gelap.</p></div>`;
+      feedSub.textContent = '0 bisikan';
+      totalCount.textContent = '0 bisikan';
+      return;
+    }
+    const entries = [];
+    for (const k of keys){
+      try{
+        const r = await window.storage.get(k, true);
+        if (r && r.value) entries.push(JSON.parse(r.value));
+      }catch(e){}
+    }
+    entries.sort((a,b) => b.time - a.time);
+    feedEl.innerHTML = entries.map(cardHTML).join('');
+    feedSub.textContent = `${entries.length} bisikan`;
+    totalCount.textContent = `${entries.length} bisikan`;
+  }catch(e){
+    feedEl.innerHTML = `<div class="empty"><p class="big">Kotak gelap sedang tak bisa dibuka.</p><p class="small">Coba muat ulang halaman ini.</p></div>`;
+  }
+}
+
+async function sendConfession(){
+  const text = input.value.trim();
+  if (!text) return;
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Mengirim…';
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+  const entry = { id, text, time: Date.now(), hearts: 0 };
+  try{
+    await window.storage.set(PREFIX + id, JSON.stringify(entry), true);
+    input.value = '';
+    charCount.textContent = '0 / 500';
+    await loadFeed();
+  }catch(e){
+    alert('Gagal mengirim. Coba lagi sebentar.');
+  }finally{
+    sendBtn.innerHTML = `Kirim ke kegelapan
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+    sendBtn.disabled = input.value.trim().length === 0;
+  }
+}
+
+async function toggleHeart(id){
+  const key = PREFIX + id;
+  try{
+    const r = await window.storage.get(key, true);
+    if (!r) return;
+    const entry = JSON.parse(r.value);
+    if (heartedLocally.has(id)){
+      heartedLocally.delete(id);
+      entry.hearts = Math.max(0, (entry.hearts || 0) - 1);
+    } else {
+      heartedLocally.add(id);
+      entry.hearts = (entry.hearts || 0) + 1;
+    }
+    await window.storage.set(key, JSON.stringify(entry), true);
+    loadFeed();
+  }catch(e){}
+}
+
+sendBtn.addEventListener('click', sendConfession);
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) sendConfession();
+});
+
+loadFeed();
+setInterval(loadFeed, 20000);
+</script>
+
+</body>
+</html>
